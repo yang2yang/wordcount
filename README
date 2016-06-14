@@ -1,0 +1,9 @@
+wc.exe工具模拟
+wc.exe [parameter][file_name]
+字符，单词，行数
+
+环境 : Linux (archlinux)
+
+统计字符数的时候要将回车符和空白符都删掉。
+
+先考虑必须有且只有两个参数的情况下.
