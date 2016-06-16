@@ -23,7 +23,7 @@ public class WordCount {
 
     }
 
-    public static void showLines(Reader reader) throws IOException {
+    public static int showLines(Reader reader) throws IOException {
        BufferedReader br = new BufferedReader(reader);
        String line;
        int count = 0;
@@ -35,9 +35,10 @@ public class WordCount {
            }
        }
        System.out.println("行数等于" + count);
+       return count;
     }
 
-    public static void showChars(Reader reader) throws IOException {
+    public static int showChars(Reader reader) throws IOException {
         BufferedReader br = new BufferedReader(reader);
         int count = 0;
         int chartemp;
@@ -47,6 +48,7 @@ public class WordCount {
             }
         }
         System.out.println("总字符数等于" + count);
+        return count;
     }
 
 //    public static int showWords(Reader reader){
