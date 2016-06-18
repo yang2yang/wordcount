@@ -2,27 +2,62 @@ import java.io.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.cli.*;
+
 /**
  * Created by jack on 16-6-14.
  */
 public class WordCount {
 
-    public static void main(String[] args) throws IOException {
-        int count = 0;
-        if(args.length != 2){
-            System.out.println("Please enter like : java WordCount <paramter> <filename>");
+    public static void main(String[] args) throws IOException, ParseException {
+
+        Options options = new Options();
+
+        Option c = Option.builder("c").required(false).hasArg().argName("filename").desc("return " +
+                "sum of characters").build();
+
+        Option l = Option.builder("l").required(false).hasArg().argName("filename").desc("return " +
+                "sum of lines").build();
+
+        Option w = Option.builder("w").required(false).hasArg().argName("filename").desc("return " +
+                "sum of words").build();
+
+//      这样的话，会有一个参数，那么这样的话和有参数的应该没与什么区别吧
+        options.addOption("help",false,"help information");
+        options.addOption(c);
+        options.addOption(l);
+        options.addOption(w);
+
+        CommandLineParser parser = new DefaultParser();
+
+        CommandLine cmd = parser.parse(options,args);
+
+        if(cmd.hasOption("help")) {
+//            System.out.println(cmd.getOptionValue("help"));
+            HelpFormatter formatter = new HelpFormatter();
+            formatter.printHelp( "java wordcount [OPTION] <FILENAME>", options );
             return;
         }
-        File file = new File("/home/jack/IdeaProjects/wordcount/src/main/resources/input.txt");
-        Reader reader = new InputStreamReader(new FileInputStream(file));
 
-        if(args[0].equals("-c")){
+        if(cmd.hasOption("c")){
+//          获得相应的选项的参数
+            String filename = cmd.getOptionValue("c");
+            System.out.println(filename);
+            File file = new File("/home/jack/IdeaProjects/wordcount/src/main/resources/input.txt");
+            Reader reader = new InputStreamReader(new FileInputStream(file));
             showChars(reader);
         }
-        else if(args[0].equals("-l")){
-            showLines(reader);
-        }else{
-           showWords(reader);
+
+        if(cmd.hasOption("l")){
+            File file = new File("/home/jack/IdeaProjects/wordcount/src/main/resources/input.txt");
+            Reader reader = new InputStreamReader(new FileInputStream(file));
+             showLines(reader);
+        }
+
+        if(cmd.hasOption("w")){
+            File file = new File("/home/jack/IdeaProjects/wordcount/src/main/resources/input.txt");
+            Reader reader = new InputStreamReader(new FileInputStream(file));
+            showWords(reader);
         }
 
     }
@@ -58,6 +93,7 @@ public class WordCount {
     public static int showWords(Reader reader) throws IOException {
         BufferedReader br = new BufferedReader(reader);
         String line;
+//      定义一个正则单词的正则表达式
         String regex = "\\w+";
         int count = 0;
         Pattern pattern = Pattern.compile(regex);
