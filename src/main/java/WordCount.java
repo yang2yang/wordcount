@@ -13,68 +13,95 @@ public class WordCount {
 
         Options options = new Options();
 
-        Option c = Option.builder("c").required(false).hasArg().argName("filename").desc("return " +
-                "sum of characters").build();
-
-        Option l = Option.builder("l").required(false).hasArg().argName("filename").desc("return " +
-                "sum of lines").build();
-
-        Option w = Option.builder("w").required(false).hasArg().argName("filename").desc("return " +
-                "sum of words").build();
-
-//      这样的话，会有一个参数，那么这样的话和有参数的应该没与什么区别吧
-        options.addOption("help",false,"help information");
-        options.addOption(c);
-        options.addOption(l);
-        options.addOption(w);
+        options.addOption("help", false, "help information");
+        options.addOption("c", false, "show characters");
+        options.addOption("l", false, "show lines");
+        options.addOption("w", false, "show words");
+        options.addOption("s", false, "recursion");
 
         CommandLineParser parser = new DefaultParser();
 
-        CommandLine cmd = parser.parse(options,args);
+        CommandLine cmd = parser.parse(options, args);
 
-        if(cmd.hasOption("help")) {
-//            System.out.println(cmd.getOptionValue("help"));
-            HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp( "java wordcount [OPTION] <FILENAME>", options );
+        HelpFormatter formatter = new HelpFormatter();
+
+        if (cmd.hasOption("help")) {
+            formatter.printHelp("java wordcount [-help] [-c] [-l] [-w] filename", options);
             return;
         }
 
-        if(cmd.hasOption("c")){
+        String[] s;
+        if ((s = cmd.getArgs()).length != 1) {
+            formatter.printHelp("java wordcount [-help] [-c] [-l] [-w] filename", options);
+            return;
+        }
+
+        File file = new File("/home/jack/IdeaProjects/wordcount/src/main/resources");
+
+        if (cmd.hasOption("s")) {
+            if (file.isDirectory()) {
+                //递归的解决问题
+                recurse(file,cmd);
+            } else {
+                //单文件正常操作
+                judge(cmd, file);
+            }
+        } else {
+            if (file.isDirectory()) {
+                for (File f : file.listFiles()) {
+                    //每一个文件都这样操作
+                    judge(cmd, f);
+                }
+            } else {
+                //单文件正常操作
+                judge(cmd, file);
+            }
+        }
+    }
+
+    public static void judge(CommandLine cmd, File file) throws IOException {
+        System.out.println("Filename:"+file.getName());
+        if (cmd.hasOption("c")) {
 //          获得相应的选项的参数
-            String filename = cmd.getOptionValue("c");
-            System.out.println(filename);
-            File file = new File("/home/jack/IdeaProjects/wordcount/src/main/resources/input.txt");
             Reader reader = new InputStreamReader(new FileInputStream(file));
             showChars(reader);
         }
 
-        if(cmd.hasOption("l")){
-            File file = new File("/home/jack/IdeaProjects/wordcount/src/main/resources/input.txt");
+        if (cmd.hasOption("l")) {
             Reader reader = new InputStreamReader(new FileInputStream(file));
-             showLines(reader);
+            showLines(reader);
         }
 
-        if(cmd.hasOption("w")){
-            File file = new File("/home/jack/IdeaProjects/wordcount/src/main/resources/input.txt");
+        if (cmd.hasOption("w")) {
             Reader reader = new InputStreamReader(new FileInputStream(file));
             showWords(reader);
         }
 
     }
 
+    public static void recurse(File file,CommandLine cmd) throws IOException {
+        for(File f : file.listFiles()){
+            if(f.isDirectory()){
+                recurse(f,cmd);
+            }else{
+               judge(cmd,f);
+            }
+        }
+    }
+
     public static int showLines(Reader reader) throws IOException {
-       BufferedReader br = new BufferedReader(reader);
-       String line;
-       int count = 0;
-       while((line = br.readLine()) != null){
+        BufferedReader br = new BufferedReader(reader);
+        String line;
+        int count = 0;
+        while ((line = br.readLine()) != null) {
 //         空行是用空串表示的表示的
 //         String对象的大小比较一定要使用equals
-           if(!line.equals("")){
-               count++;
-           }
-       }
-       System.out.println("行数等于" + count);
-       return count;
+            if (!line.equals("")) {
+                count++;
+            }
+        }
+        System.out.println("行数等于" + count);
+        return count;
     }
 
     public static int showChars(Reader reader) throws IOException {
@@ -82,7 +109,7 @@ public class WordCount {
         int count = 0;
         int chartemp;
         while ((chartemp = br.read()) != -1) {
-            if((char)chartemp != '\n' && (char)chartemp != '\t' && (char)chartemp != ' ') {
+            if ((char) chartemp != '\n' && (char) chartemp != '\t' && (char) chartemp != ' ') {
                 count++;
             }
         }
@@ -97,13 +124,13 @@ public class WordCount {
         String regex = "\\w+";
         int count = 0;
         Pattern pattern = Pattern.compile(regex);
-        while((line = br.readLine()) != null){
+        while ((line = br.readLine()) != null) {
             Matcher matcher = pattern.matcher(line);
-            while(matcher.find()){
+            while (matcher.find()) {
                 count++;
             }
         }
-        System.out.println("单词总数是"+count);
+        System.out.println("单词总数是" + count);
         return count;
     }
 }

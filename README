@@ -1,11 +1,19 @@
-wc.exe工具模拟
-wc.exe [parameter][file_name]
-字符，单词，行数
+#wc.exe工具模拟
+java wordcount [-help] [-c] [-l] [-w] [-s] filename
+能够显示总的字符，总的单词，总的行数
 
+#环境
 环境 : Linux (archlinux)
 
+#Usage:
+usage: java wordcount [-help] [-c] [-l] [-w] filename
+ -c      show characters
+ -help   help information
+ -l      show lines
+ -s      recursion
+ -w      show words
+
+#相关说明
 统计字符数的时候要将回车符和空白符都删掉.
 统计代码行数的时候直接统计即可.(因为是代码的行数所以不包括空行)
-统计单词的时候是将所有的相连的字母看成一个单词，还是说将不这样弄，将所有只要是字母相连的情况看成是一个单词?
-
-先考虑必须有且只有两个参数的情况下.
+统计单词的时候是将所有的相连的字母看成一个单词(包括一般的数字)(其实不应该这样的?)
