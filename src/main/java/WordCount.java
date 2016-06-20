@@ -1,4 +1,6 @@
 import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,7 +38,7 @@ public class WordCount {
             return;
         }
 
-        File file = new File("/home/jack/IdeaProjects/wordcount/src/main/resources");
+        File file = new File(WordCount.class.getClassLoader().getResource(s[0]).getPath());
 
         if (cmd.hasOption("s")) {
             if (file.isDirectory()) {
